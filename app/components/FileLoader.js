@@ -27,6 +27,7 @@ export default class FileLoader extends Component {
     changeFolderSelection: PropTypes.func.isRequired,
     playFile: PropTypes.func.isRequired,
     storeScrollPosition: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
 
     // game actions
     gameProfileLoad: PropTypes.func.isRequired,
@@ -285,6 +286,7 @@ export default class FileLoader extends Component {
           file={file}
           playFile={this.props.playFile}
           gameProfileLoad={this.props.gameProfileLoad}
+          closeModal={this.props.closeModal}
         />
       ),
       this

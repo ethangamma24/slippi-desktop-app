@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {
-  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION,
+  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION, CLOSE_MODAL, RENAME_FILE,
 } from '../actions/fileLoader';
 import DolphinManager from '../domain/DolphinManager';
 
@@ -22,6 +22,8 @@ const defaultState = {
     x: 0,
     y: 0,
   },
+  oldName: "",
+  newName: "",
 };
 
 export default function fileLoader(state = defaultState, action) {
@@ -34,6 +36,10 @@ export default function fileLoader(state = defaultState, action) {
     return loadFilesInFolder(state, action);
   case STORE_SCROLL_POSITION:
     return storeScrollPosition(state, action);
+  case CLOSE_MODAL:
+    return closeModal(state);
+  case RENAME_FILE:
+    return renameFile(state, action);
   default:
     return state;
   }
@@ -126,4 +132,13 @@ function storeScrollPosition(state, action) {
     ...state,
     scrollPosition: action.payload.position,
   };
+}
+
+function closeModal(state) {
+  const newState = { ...state };
+  newState.fileToEdit = null;
+  return newState;
+}
+
+function renameFile() {
 }

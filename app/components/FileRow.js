@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Table, Button } from 'semantic-ui-react';
+import { Table, Button, Modal, Form } from 'semantic-ui-react';
 import { stages as stageUtils } from 'slp-parser-js';
 
 import styles from './FileLoader.scss';
@@ -11,12 +11,16 @@ import PlayerChiclet from './common/PlayerChiclet';
 import * as timeUtils from '../utils/time';
 
 const path = require('path');
+const fs = require('fs');
+const electronSettings = require('electron-settings');
 
 export default class FileRow extends Component {
   static propTypes = {
     file: PropTypes.object.isRequired,
     playFile: PropTypes.func.isRequired,
     gameProfileLoad: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    // store: PropTypes.any.isRequired,
   };
 
   playFile = () => {
@@ -25,6 +29,39 @@ export default class FileRow extends Component {
     // Play the file
     this.props.playFile(file);
   };
+
+  renameFile = (inputText) => {
+    const file = this.props.file || {};
+    const fileName = file.fileName || "";
+    const rootFolder = electronSettings.get('settings.rootSlpPath');
+
+    console.log(inputText);
+    console.log(rootFolder);
+    console.log(fileName);
+
+    fs.rename(`${rootFolder}\\${fileName}`, `${rootFolder}\\${inputText}.slp`, function(err) {
+      if (err) console.log(`ERROR: ${err}`);
+      if (inputText.includes('\\') || 
+          inputText.includes('/') || 
+          inputText.includes('?') || 
+          inputText.includes('%') || 
+          inputText.includes('*') || 
+          inputText.includes(':') || 
+          inputText.includes('|') || 
+          inputText.includes('<') || 
+          inputText.includes('>') || 
+          inputText.includes('.')) 
+      {
+        this.generateFileRenameError();
+      } else {
+        console.log('Reloading...')
+      }
+    });
+
+    this.props.file.fileName = this.inpputtext;
+    this.props.closeModal();
+    this.handleClose();
+  }
 
   viewStats = () => {
     const file = this.props.file || {};
@@ -60,6 +97,9 @@ export default class FileRow extends Component {
       {
         label: 'File',
         content: this.getFileName(),
+      },
+      {
+        content: this.editFileName(),
       },
     ];
 
@@ -110,6 +150,39 @@ export default class FileRow extends Component {
     const stageName = stageUtils.getStageName(stageId) || 'Unknown';
 
     return stageName;
+  }
+
+  editFileName() {
+    // const store = this.props.store || {};
+    // const fileToEdit = store.fileToEdit;
+    let inputText = '';
+
+    return (
+      <Modal trigger={
+        <Button
+          circular={true}
+          inverted={true}
+          size="tiny"
+          basic={true}
+          icon="pencil"
+        />
+      }
+      // TODO: Figure out how to make this switch between true and false
+      // open={!!fileToEdit}
+      >
+        <Modal.Header>Rename Playback File</Modal.Header>
+        <Modal.Content>
+          <Modal.Description>
+            <div className="ui secondary segment">Note: You cannot use &apos;/ \ ? % * : | &quot; &gt; .&apos; in the file name, these are reserved characters.</div>
+            <br />
+            <Form onSubmit={ (e) => { e.preventDefault(); this.renameFile(inputText) }}>
+              <Form.Input onChange={(e) => { inputText = e.target.value }} name="fileName" label="File Name" />
+              <Form.Button content="Submit" />
+            </Form>
+          </Modal.Description>
+        </Modal.Content>
+      </Modal>
+    );
   }
 
   generateTeamElements() {

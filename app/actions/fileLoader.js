@@ -1,5 +1,5 @@
-import _ from 'lodash';
 import fs from 'fs';
+import _ from 'lodash';
 import path from 'path';
 import SlippiGame from 'slp-parser-js';
 
@@ -9,6 +9,8 @@ export const LOAD_ROOT_FOLDER = 'LOAD_ROOT_FOLDER';
 export const CHANGE_FOLDER_SELECTION = 'CHANGE_FOLDER_SELECTION';
 export const LOAD_FILES_IN_FOLDER = 'LOAD_FILES_IN_FOLDER';
 export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
+export const CLOSE_MODAL = 'CLOSE_MODAL';
+export const RENAME_FILE = 'RENAME_FILE';
 
 export function loadRootFolder() {
   return async (dispatch, getState) => { 
@@ -65,6 +67,20 @@ export function storeScrollPosition(position) {
       position: position,
     },
   };
+}
+
+export function closeModal() {
+  return {
+    type: CLOSE_MODAL,
+    payload: {},
+  };
+}
+
+export function renameFile() {
+  return {
+    type: RENAME_FILE,
+    payload: {},
+  }
 }
 
 export function playFile(file) {
