@@ -15,13 +15,16 @@ const fs = require('fs');
 const electronSettings = require('electron-settings');
 
 export default class FileRow extends Component {
+  
   static propTypes = {
     file: PropTypes.object.isRequired,
     playFile: PropTypes.func.isRequired,
     gameProfileLoad: PropTypes.func.isRequired,
-    closeModal: PropTypes.func.isRequired,
+    redrawFilename: PropTypes.func.isRequired,
     // store: PropTypes.any.isRequired,
   };
+  
+  state = { open: false, platform: process.platform };
 
   playFile = () => {
     const file = this.props.file || {};
@@ -35,32 +38,48 @@ export default class FileRow extends Component {
     const fileName = file.fileName || "";
     const rootFolder = electronSettings.get('settings.rootSlpPath');
 
-    console.log(inputText);
-    console.log(rootFolder);
-    console.log(fileName);
+    console.log(this.props.file.fileName);
 
-    fs.rename(`${rootFolder}\\${fileName}`, `${rootFolder}\\${inputText}.slp`, function(err) {
-      if (err) console.log(`ERROR: ${err}`);
-      if (inputText.includes('\\') || 
-          inputText.includes('/') || 
-          inputText.includes('?') || 
-          inputText.includes('%') || 
-          inputText.includes('*') || 
-          inputText.includes(':') || 
-          inputText.includes('|') || 
-          inputText.includes('<') || 
-          inputText.includes('>') || 
-          inputText.includes('.')) 
-      {
-        this.generateFileRenameError();
-      } else {
-        console.log('Reloading...')
-      }
-    });
+    if (this.state.platform === "win32" && inputText !== '') { 
+      fs.rename(`${rootFolder}\\${fileName}`, `${rootFolder}\\${inputText}.slp`, function(err) {
+        if (err) console.log(`ERROR: ${err}`);
+        if (inputText.includes('\\') || 
+            inputText.includes('/') || 
+            inputText.includes('?') || 
+            inputText.includes('%') || 
+            inputText.includes('*') || 
+            inputText.includes(':') || 
+            inputText.includes('|') || 
+            inputText.includes('<') || 
+            inputText.includes('>') || 
+            inputText.includes('.')) 
+        {
+          this.generateFileRenameError();
+        }
+      });
+    } else if (inputText !== '') {
+      fs.rename(`${rootFolder}/${fileName}`, `${rootFolder}/${inputText}.slp`, function(err) {
+        if (err) console.log(`ERROR: ${err}`);
+        if (inputText.includes('\\') || 
+            inputText.includes('/') || 
+            inputText.includes('?') || 
+            inputText.includes('%') || 
+            inputText.includes('*') || 
+            inputText.includes(':') || 
+            inputText.includes('|') || 
+            inputText.includes('<') || 
+            inputText.includes('>') || 
+            inputText.includes('.')) 
+        {
+          this.generateFileRenameError();
+        }
+      });
+    }
 
-    this.props.file.fileName = this.inpputtext;
-    this.props.closeModal();
-    this.handleClose();
+    this.props.redrawFilename(inputText, fileName);
+    // this.close;
+    // this.props.closeModal();
+    // this.handleClose();
   }
 
   viewStats = () => {
@@ -152,30 +171,33 @@ export default class FileRow extends Component {
     return stageName;
   }
 
+  close = () => this.setState({ open: false });
+
   editFileName() {
-    // const store = this.props.store || {};
-    // const fileToEdit = store.fileToEdit;
     let inputText = '';
+    const open = this.state.open;
 
     return (
-      <Modal trigger={
-        <Button
-          circular={true}
-          inverted={true}
-          size="tiny"
-          basic={true}
-          icon="pencil"
-        />
-      }
-      // TODO: Figure out how to make this switch between true and false
-      // open={!!fileToEdit}
+      <Modal 
+        open={ open }
+        trigger={
+          <Button
+            circular={true}
+            inverted={true}
+            size="tiny"
+            basic={true}
+            icon="pencil"
+            onClick={ () => { this.setState({ open: true }) } }
+          /> 
+      	} 
+        onClose = { this.close }
       >
         <Modal.Header>Rename Playback File</Modal.Header>
         <Modal.Content>
           <Modal.Description>
-            <div className="ui secondary segment">Note: You cannot use &apos;/ \ ? % * : | &quot; &gt; .&apos; in the file name, these are reserved characters.</div>
+            <div className="ui secondary segment">Note: You cannot use &apos;/ \ ? % * : | &quot; &gt; .&apos; in the file name, these are reserved characters. Additionally, the file name cannot be empty.</div>
             <br />
-            <Form onSubmit={ (e) => { e.preventDefault(); this.renameFile(inputText) }}>
+            <Form onSubmit={ (e) => { e.preventDefault(); this.renameFile(inputText); this.setState({ open: false }); }}>
               <Form.Input onChange={(e) => { inputText = e.target.value }} name="fileName" label="File Name" />
               <Form.Button content="Submit" />
             </Form>

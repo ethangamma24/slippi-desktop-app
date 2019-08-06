@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {
-  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION, CLOSE_MODAL, RENAME_FILE,
+  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION, REDRAW_FILENAME,
 } from '../actions/fileLoader';
 import DolphinManager from '../domain/DolphinManager';
 
@@ -36,10 +36,8 @@ export default function fileLoader(state = defaultState, action) {
     return loadFilesInFolder(state, action);
   case STORE_SCROLL_POSITION:
     return storeScrollPosition(state, action);
-  case CLOSE_MODAL:
-    return closeModal(state);
-  case RENAME_FILE:
-    return renameFile(state, action);
+  case REDRAW_FILENAME:
+    return redrawFilename(state, action);
   default:
     return state;
   }
@@ -134,11 +132,20 @@ function storeScrollPosition(state, action) {
   };
 }
 
-function closeModal(state) {
-  const newState = { ...state };
-  newState.fileToEdit = null;
-  return newState;
-}
+// TODO: Figure out how to make this wait to return until filename is updated
+function redrawFilename(state, action) {
+  const payload = action.payload || {};
+  const newName = payload.newName;
+  const oldName = payload.oldName;
 
-function renameFile() {
+  const newState = { ...state };
+  console.log(newState);
+  let i;
+  for (i = 0; i < newState.files.length; i += 1) {
+    if (newState.files[i].fileName === `${oldName}.slp`) {
+      newState.files[i].fileName =`${newName}.slp`;
+      console.log(newState);
+      return newState;
+    }
+  }
 }
