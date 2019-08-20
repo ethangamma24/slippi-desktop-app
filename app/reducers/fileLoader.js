@@ -132,20 +132,8 @@ function storeScrollPosition(state, action) {
   };
 }
 
-// TODO: Figure out how to make this wait to return until filename is updated
-function redrawFilename(state, action) {
-  const payload = action.payload || {};
-  const newName = payload.newName;
-  const oldName = payload.oldName;
-
-  const newState = { ...state };
-  console.log(newState);
-  let i;
-  for (i = 0; i < newState.files.length; i += 1) {
-    if (newState.files[i].fileName === `${oldName}.slp`) {
-      newState.files[i].fileName =`${newName}.slp`;
-      console.log(newState);
-      return newState;
-    }
-  }
+function redrawFilename(state) {
+  return {
+    ...state,
+  };
 }

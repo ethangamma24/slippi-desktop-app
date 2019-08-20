@@ -21,7 +21,6 @@ export default class FileRow extends Component {
     playFile: PropTypes.func.isRequired,
     gameProfileLoad: PropTypes.func.isRequired,
     redrawFilename: PropTypes.func.isRequired,
-    // store: PropTypes.any.isRequired,
   };
   
   state = { open: false, platform: process.platform };
@@ -35,10 +34,11 @@ export default class FileRow extends Component {
 
   renameFile = (inputText) => {
     const file = this.props.file || {};
+    const newFile = file || {};
     const fileName = file.fileName || "";
     const rootFolder = electronSettings.get('settings.rootSlpPath');
 
-    console.log(this.props.file.fileName);
+    console.log(this.props.file);
 
     if (this.state.platform === "win32" && inputText !== '') { 
       fs.rename(`${rootFolder}\\${fileName}`, `${rootFolder}\\${inputText}.slp`, function(err) {
@@ -76,10 +76,9 @@ export default class FileRow extends Component {
       });
     }
 
+    newFile.fileName = inputText;
+    this.setState();
     this.props.redrawFilename(inputText, fileName);
-    // this.close;
-    // this.props.closeModal();
-    // this.handleClose();
   }
 
   viewStats = () => {
