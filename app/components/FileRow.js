@@ -20,7 +20,6 @@ export default class FileRow extends Component {
     file: PropTypes.object.isRequired,
     playFile: PropTypes.func.isRequired,
     gameProfileLoad: PropTypes.func.isRequired,
-    redrawFilename: PropTypes.func.isRequired,
   };
   
   state = { open: false, platform: process.platform };
@@ -78,7 +77,6 @@ export default class FileRow extends Component {
 
     newFile.fileName = inputText;
     this.setState();
-    this.props.redrawFilename(inputText, fileName);
   }
 
   viewStats = () => {

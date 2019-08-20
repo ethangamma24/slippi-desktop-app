@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {
-  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION, REDRAW_FILENAME,
+  LOAD_ROOT_FOLDER, CHANGE_FOLDER_SELECTION, LOAD_FILES_IN_FOLDER, STORE_SCROLL_POSITION,
 } from '../actions/fileLoader';
 import DolphinManager from '../domain/DolphinManager';
 
@@ -22,8 +22,6 @@ const defaultState = {
     x: 0,
     y: 0,
   },
-  oldName: "",
-  newName: "",
 };
 
 export default function fileLoader(state = defaultState, action) {
@@ -36,8 +34,6 @@ export default function fileLoader(state = defaultState, action) {
     return loadFilesInFolder(state, action);
   case STORE_SCROLL_POSITION:
     return storeScrollPosition(state, action);
-  case REDRAW_FILENAME:
-    return redrawFilename(state, action);
   default:
     return state;
   }
@@ -132,8 +128,3 @@ function storeScrollPosition(state, action) {
   };
 }
 
-function redrawFilename(state) {
-  return {
-    ...state,
-  };
-}

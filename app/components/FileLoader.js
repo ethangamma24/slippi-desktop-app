@@ -27,7 +27,6 @@ export default class FileLoader extends Component {
     changeFolderSelection: PropTypes.func.isRequired,
     playFile: PropTypes.func.isRequired,
     storeScrollPosition: PropTypes.func.isRequired,
-    redrawFilename: PropTypes.func.isRequired,
 
 
     // game actions
@@ -287,7 +286,6 @@ export default class FileLoader extends Component {
           file={file}
           playFile={this.props.playFile}
           gameProfileLoad={this.props.gameProfileLoad}
-          redrawFilename={this.props.redrawFilename}
         />
       ),
       this

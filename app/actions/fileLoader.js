@@ -9,7 +9,6 @@ export const LOAD_ROOT_FOLDER = 'LOAD_ROOT_FOLDER';
 export const CHANGE_FOLDER_SELECTION = 'CHANGE_FOLDER_SELECTION';
 export const LOAD_FILES_IN_FOLDER = 'LOAD_FILES_IN_FOLDER';
 export const STORE_SCROLL_POSITION = 'STORE_SCROLL_POSITION';
-export const REDRAW_FILENAME = 'REDRAW_FILENAME';
 
 export function loadRootFolder() {
   return async (dispatch, getState) => { 
@@ -66,16 +65,6 @@ export function storeScrollPosition(position) {
       position: position,
     },
   };
-}
-
-export function redrawFilename(newName, oldName) {
-  return {
-    type: REDRAW_FILENAME,
-    payload: {
-      newName: newName,
-      oldName: oldName,
-    },
-  }
 }
 
 export function playFile(file) {
